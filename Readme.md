@@ -3,6 +3,7 @@ Short summary of project: The overall goal of the project is to find the target 
 
 **Dataset details**
 Sequencing platform: Use publicly available IS data from https://isfinder.biotoul.fr/
+
 Sample size: 350 sequences
 Experimental groups: One IS family (IS110), with one sub-group (IS1111)
 Species: Bacteria
