@@ -1,0 +1,13 @@
+
+======================================================================================
+                  Resource Usage on 2023-09-30 01:18:52:
+   Job Id:             96516446.gadi-pbs
+   Project:            iz89
+   Exit Status:        0
+   Service Units:      1081.81
+   NCPUs Requested:    224                    NCPUs Used: 224             
+                                           CPU Time Used: 03:20:07        
+   Memory Requested:   1.97TB                Memory Used: 245.74GB        
+   Walltime requested: 12:00:00            Walltime Used: 03:51:49        
+   JobFS requested:    3.12TB                 JobFS used: 11.56MB         
+======================================================================================

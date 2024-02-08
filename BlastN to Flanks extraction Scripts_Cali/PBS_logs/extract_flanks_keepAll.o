@@ -1,0 +1,13 @@
+
+======================================================================================
+                  Resource Usage on 2023-02-08 18:42:52:
+   Job Id:             71781615.gadi-pbs
+   Project:            er01
+   Exit Status:        0
+   Service Units:      20.48
+   NCPUs Requested:    1                      NCPUs Used: 1               
+                                           CPU Time Used: 00:11:59        
+   Memory Requested:   30.0GB                Memory Used: 30.0GB          
+   Walltime requested: 24:00:00            Walltime Used: 06:49:41        
+   JobFS requested:    500.0MB                JobFS used: 0B              
+======================================================================================
