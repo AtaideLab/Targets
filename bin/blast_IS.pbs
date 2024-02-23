@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#########################################################
+#
+# Platform: NCI Gadi HPC
+#
+# Description: 
+#       - See TBA
+#	- BLAST 349 IS110 family sequences against nt/nr restricted to bactieral taxids
+# 	- Use mt_mode 1; despite the warning issued about the run not meeting the 
+# 	 requirements to take full advantage of this mode, it did outperform tests with mt_mode 0
+# 	- Using customised version of output format 6:
+# 	 qseqid qlen length qstart qend sseqid stitle sacc slen sstart send  pident mismatch gapopen evalue bitscore
+#
+# Usage:
+#       - qsub Scripts/blast_IS_complete.pbs
+#
+# Compute resources:
+#       - Completed in 12 minutes on 48 CPU (1 normal node)
+#	- Duplicate run: Completed in 19 minutes on 48 CPU (1 hugemem node)
+#	- Benchmarking a handful of sequences indicated a much longer walltime
+#	 would be required - very strange, perhaps memory caching of the db is involved 
+#
+# Output:
+#       - Output/IS110_complete.bacterial.blast.out
+#	- Requires downstream filtering, with Scripts/filter_first_round_blast.pl
+#
+# Author/s: Cali Willet; cali.willet@sydney.edu.au
+#
+# If you use this script towards a publication, please acknowledge the
+# Sydney Informatics Hub (or co-authorship, where appropriate).
+#
+# Suggested acknowledgement: 
+#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#
+#########################################################
+
+
+#PBS -P xh27
+#PBS -N blast
+#PBS -l ncpus=28
+#PBS -l mem=252GB
+#PBS -l walltime=01:00:00
+#PBS -q normalbw
+#PBS -W umask=022
+#PBS -l wd
+#PBS -o ./PBS_logs/blast_IS_complete_bacteriaArchaea_newDB2-replicate.o
+#PBS -e ./PBS_logs/blast_IS_complete_bacteriaArchaea_newDB2-replicate.e
+#PBS -l storage=scratch/er01+gdata/er01
+
+module load blast+/2.13.0
+
+#nt=/g/data/er01/NCBI/preformatted_2022_11_21/nt
+nt=/g/data/er01/NCBI/preformatted_2024-02-19-REDO/nt
+
+seq=IS110_complete # the prefix name of the multi-fasta  (omit .fasta suffix) containing all of the IS sequences you want to BLAST 
+
+echo Using mt_mode 1 thread by query and blasting against a subset of nt refined by taxid 2 bacterial 
+
+blastn \
+	-db ${nt} \
+	-taxidlist bacterial_archaeal.taxids \
+	-query ./Input/${seq}.fasta \
+	-out ./Output/${seq}.bacterial_archaeal.blast.out \
+	-outfmt "6 qseqid qlen length qstart qend sseqid stitle sacc slen sstart send pident mismatch gapopen evalue bitscore"\
+	-num_threads ${NCPUS} \
+	-mt_mode 1
