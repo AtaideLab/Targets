@@ -1,1 +1,0 @@
-Warning: [blastn] This set of queries is too small to fully benefit from the -mt_mode=1 option. The total number of letters should be at least 2500000 bases per thread, and there should be at least one query of this length per thread.
