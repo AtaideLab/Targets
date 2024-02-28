@@ -31,12 +31,12 @@ do
 		-q normalbw \
 		-l ncpus=1 \
 		-l mem=4GB \
-		-l walltime=02:00:00 \
+		-l walltime=12:00:00 \
 		-l wd \
 		-W umask=022 \
-		-o ${compute_logs}/${name}.o \
-		-e ${compute_logs}/${name}.e \
-		-v filtered_hits="${file}",blastdbcmd="${blastdbcmd}" \
+		-o ${compute_logs}/${name}-rerun.o \
+		-e ${compute_logs}/${name}-rerun.e \
+		-v filtered_hits="${file}",blastdbcmd="${blastdbcmd}",chunk="${name}" \
 		${script}
 	
 	sleep 2

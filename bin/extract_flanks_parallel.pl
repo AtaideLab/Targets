@@ -66,12 +66,20 @@ my $nt = '/g/data/er01/NCBI/preformatted_2024-02-19/nt';
 
 # Parse input hits as a qsub command line variable:
 my $filtered_hits = $ENV{filtered_hits};
-chomp $filtered_hits;  
+chomp $filtered_hits; 
+
+my $chunk = $ENV{chunk};
+chomp $chunk; 
 
  
 # Output files:
-my $parent_outdir = "./Output/PARALLEL_Flanking_fastas_$filterName";
-`mkdir -p $parent_outdir`;
+my $base_outdir = "./Output/EVEN-MORE-PARALLEL_Flanking_fastas_$filterName";
+`mkdir -p $base_outdir`;
+
+# TESTING RERUN  to see if this actually helped. if not drop it, as it requires
+# post-processing and cleanup!
+#my $parent_outdir = "$base_outdir\/$chunk"; 
+#`mkdir -p $parent_outdir`;
 
 
 #########################################################
@@ -91,8 +99,8 @@ while (my $line = <F>) {
 	my @cols = split('\t', $line);
 	my $query = $cols[0];
 	
-	# Make a private output directory per IS for the temp flank fastas
-	my $outdir = "$parent_outdir\/$query"; 
+	# Make a private output directory per IS for the flank fastas
+	my $outdir = "$base_outdir\/$query"; 
 	`mkdir -p ${outdir}`; 
 	 
 	if (!$last_query) { # First sequence
@@ -126,8 +134,8 @@ while (my $line = <F>) {
 	
 	# Run blastdbcmd utility to obtain fasta of the subject sequence for the left flank and right flank
 	my $accession = $cols[7];
-	my $out_left = "./$outdir\/$query\_within_$accession\_leftFlank_$left_flank_start\-$left_flank_end\.fasta.temp"; 
-	my $out_right = "./$outdir\/$query\_within_$accession\_rightFlank_$right_flank_start\-$right_flank_end\.fasta.temp";   
+	my $out_left = "./$outdir\/$query\_within_$accession\_LEFT_FLANK_$left_flank_start\-$left_flank_end\_pairs-with-right-flank_$right_flank_start\-$right_flank_end\.fasta"; 
+	my $out_right = "./$outdir\/$query\_within_$accession\_RIGHT_FLANK_$right_flank_start\-$right_flank_end\_pairs-with-left-flank_$left_flank_start\-$left_flank_end\.fasta";   
 	`${blastdbcmd} -entry ${accession} -db ${nt} -out ${out_left} -range ${left_flank_start}-${left_flank_end}`; 
 	`${blastdbcmd} -entry ${accession} -db ${nt} -out ${out_right} -range ${right_flank_start}-${right_flank_end}`;
 	
@@ -138,7 +146,9 @@ while (my $line = <F>) {
 	`cat ${out_left} ${out_right} | sed '/^>/d' > $concat`;
 	
 	### NEW METHOD: Do cleaan up here - cat all flanks to multi-fasta in post-processing 
-	`rm ${out_left} ${out_right}`; 
+	#### EVEN NEWER METHOD: do not cleanup, because concatenating them loses the junction information, which is incorrectly 
+	# assumed to be the centre of the seqeucne by the python weblogo script
+	#`rm ${out_left} ${out_right}`; 
 	
 	if ($rev_comp) {
 		$header .= "\_RC"; # add RC tag to sequence header
