@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#########################################################
+#
+# ADD LICENSE
+#
+# Author/s: Cali Willet; cali.willet@sydney.edu.au
+#
+# If you use this script towards a publication, please acknowledge the
+# Sydney Informatics Hub (or co-authorship, where appropriate).
+#
+# Suggested acknowledgement: 
+#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#
+#
+#########################################################
+
+#PBS -P xh27
+#PBS -N concat
+#PBS -l ncpus=1
+#PBS -l mem=4GB
+#PBS -l walltime=00:30:00
+#PBS -q hugemem
+#PBS -W umask=022
+#PBS -l wd
+#PBS -o ./PBS_logs/extract_flanks_postprocess.o
+#PBS -e ./PBS_logs/extract_flanks_postprocess.e
+#PBS -l storage=scratch/er01+gdata/er01
+
+perl bin/extracted_flanks_postprocess.pl

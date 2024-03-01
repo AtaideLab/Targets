@@ -2,34 +2,7 @@
 
 #########################################################
 #
-# Platform: any Linux command line environment
-#
-# Description: 
-# 	- See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST/blob/master/BLAST-IS-workflow.md#filter-the-is110_complete-blast-output
-#	- Apply the following filters to first round blast of IS110 family against nt/nr filtered to bacterial taxids:
-# 		- E value <= max_e_value (user-defined variable) [column 15 of custom output format]
-# 		- % identity >= min_pc_ident (user-defined variable) [column 12]
-# 		- Subject length >= min_subject_length (user-defined variable) [column 9]
-# 		- Subject length <= max_subject_length (user-defined variable) [column 9]
-# 		- Query coverage 100% 
-#			 - Query start [column 4] = 1 
-#			 - Query end [column 5] = query length [column 2]
-#	- The blast run was customised to use the following output headers:
-#		- qseqid qlen length qstart qend sseqid stitle sacc slen sstart send  pident mismatch gapopen evalue bitscore
-#
-# Usage:
-#	- First, update variables for max_e_value, min_pc_ident, min_subject_length, max_subject_length
-#	- Check variable filterName for uniqueness
-#		- This will be initialised by default as 'Ident<min_pc_ident>_E<max_e_value>' and used to name the output files
-#		- It does not include subject length descriptors, so manually add this in if required 
-#	- Then run with: perl Scripts/filter_first_round_blast.pl
-#
-# Compute resources:
-#	- 1 CPU, fast, run this on the login node
-#
-# Output:
-#	- Output/IS110_complete_<filterName>.bacterial.blast.filtered; BLAST hits passing filters, with the addition of a header line
-#	- Output/IS110_complete_<filterName>.bacterial.blast.report; Number of raw hits and number of hits passing filters for each IS
+# ADD LICENSE
 #
 # Author/s: Cali Willet; cali.willet@sydney.edu.au
 #
@@ -37,7 +10,8 @@
 # Sydney Informatics Hub (or co-authorship, where appropriate).
 #
 # Suggested acknowledgement: 
-#	- See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#
 #
 #########################################################
 
@@ -45,7 +19,7 @@ use warnings;
 use strict;
 
 #########################################################
-# FILTERING PARAMETERS: TO BE ADJUSTED BY USER
+# FILTERING PARAMETERS: CAN BE ADJUSTED BY USER OR LEAVE AS DEFAULT
 #########################################################
 
 # Subject length rnage. To turn off filtering by subject length, 
@@ -64,7 +38,7 @@ my $min_pc_ident = 95;
 # Name of filter, to be used to name the output files
 # Subject length filter not included in auto-generated filter name, 
 # over-ride the filterName variable manually if required
-my $filterName = "Ident$min_pc_ident\_E$max_e_value"; 
+my $filter_name = "Ident$min_pc_ident\_E$max_e_value"; 
 
 
 #########################################################
@@ -81,8 +55,8 @@ my $hits = "./Output/$dataset\.bacterial_archaeal.blast.out";
 
 
 # Output files:
-my $report = "./Output/$dataset\_$filterName\.bacterial_archaeal.blast.report"; 
-my $filtered_hits = "./Output/$dataset\_$filterName\.bacterial_archaeal.blast.filtered";
+my $report = "./Output/$dataset\_$filter_name\.bacterial_archaeal.blast.report"; 
+my $filtered_hits = "./Output/$dataset\_$filter_name\.bacterial_archaeal.blast.filtered";
 
 # Load input sequence names into RAM, to enable reporting of zeros
 my $idhash = {}; 

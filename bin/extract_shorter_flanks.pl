@@ -2,23 +2,7 @@
 
 #########################################################
 #
-# Platform: USyd Artemis HPC (this perl script can be run on any Linux CLI)
-#
-# Description: 
-#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST/blob/master/BLAST-IS-workflow.md#adjust-flank-size-and-first-round-MSA
-#	- Extracts N bp flanks (N bp from either side of IS insertion site) and 
-#	 writes flank multifasta for each IS
-#	- Provide flank size as first and only argument, eg 20 will take 20 bp left and right
-#	- yielding fasta with 40 bp sequence per IS
-#
-# Usage:
-#       - perl Scripts/extract_shorter_flanks.pl <N>
-#
-# Compute resources:
-#       - a few seconds on the login node 
-#
-# Output:
-#       - Output/Flanking_fastas_<N>bp: a flank fasta for each IS 
+# ADD LICENSE
 #
 # Author/s: Cali Willet; cali.willet@sydney.edu.au
 #
@@ -32,111 +16,122 @@
 
 use warnings;
 use strict;
+use POSIX;
 use File::Basename;
-
-# List file created at previous step, all IS passing filters:
-my $list = 'Output/IS110_complete_Ident95_E0.bacterial_archaeal.blast.list';
+ 
 
 # Parameter options: 
+my $input_flank_size = 200; # size of the original extracted flanks using blastdbcmd
 my $flank_size = $ARGV[0]; # size of the flanks to be reduced to 
 if (! $flank_size) {
 	print "ERROR: Please provide flank size as argument to script.\nExiting.\n\n"; 
 	die;  
 }
 chomp $flank_size; 
-
-my $length = $flank_size * 2; 
-
+my $target_length = 2 * $flank_size;
 
 # Input files: 
 my $dataset = 'IS110_complete'; 
-my $filterName = 'Ident95_E0'; 
-#my $indir = "./Output/Flanking_fastas_$filterName"; 
-
-my $indir = 'Output/EVEN-MORE-PARALLEL_Flanking_fastas_Ident95_E0'; 
-
-# Output files:
-my $outdir = "$indir\/${length}bp_concatenated_multifastas";
-`mkdir -p $outdir`;
-
-# Read through each IS directory within the output directory
-# Pair the unconcatenated fasta files to take the new $flank_size 
-# from left and right and make new shorter concatenated output 
-
-open (L, $list) || die "$! $list\n";
-
-while (my $IS = <L>) {
-	chomp $IS;
-	print "Working on $IS\n"; 
-	my $in = "$indir\/$IS"; 
-	# main flanks are in capitals, pair IDs are lower case:
-	my @left_flanks = split(' ', `ls ${in}/*LEFT_FLANK*`);   
-	#IS1000A_IS110_unknown_within_AE017221_LEFT_FLANK_1135278-1135477_pairs-with-right-flank_1136673-1136872.fasta 
-	
-	foreach my $left (@left_flanks) {
-		my @elems = split('_', $left); 
-		my $accession = $elems[-6];
-
-		
-		# Obtain the right flank pairing from the 'pairs-with-right-flank' info in left flank filename
-		my $right_info = $elems[-1];
-		$right_info =~ s/\.fasta$//; 
-		my ($right_start, $right_end) = split('-', $right_info); 
-		my $right = `ls ${in}/${IS}_within_${accession}_RIGHT_FLANK_${right_start}-${right_end}_*fasta`;  
-		
-		#print "Pairing:\n$left\n$right\n\n"; 
-		
-		# Take n bp from end of left flank:
-		# first, get seq as string for substr function 
-		open (LEFT, "$left") || die "$! $left\n"; 
-		chomp (my $header = <LEFT>); 
-		my $left_as_string = ''; 
-		while (my $seq = <LEFT>) {
-			chomp $seq; 
-			$left_as_string .= $seq; 
-		} close LEFT; 
-		# then take last n bp
-		my $left_n = substr($left_as_string, -$flank_size);
-		
-		
-		# take n bp from start of right flank 
-		# first, get seq as string for substr function 
-		open (RIGHT, "$right") || die "$! $right\n"; 
-		chomp ($header = <RIGHT>); 
-		my $right_as_string = ''; 
-		while (my $seq = <RIGHT>) {
-			chomp $seq; 
-			$right_as_string .= $seq; 
-		} close RIGHT; 
-		# then take first n bp
-		my $right_n = substr($right_as_string, 0, $flank_size);		
-		
-		
-		# concatenate and send to labelled outdir 
-		# using original flank ranges in outfile name for simplicity
-		my $out_flank = basename($left); 
-		$out_flank =~ s/pairs-with-right-flank/RIGHT_FLANK/;
-		my $copy_header = $out_flank; 
-		$copy_header =~ s/\.fasta$//;		
-		$out_flank =~ s/\.fasta/_${flank_size}bp\.fasta.temp/;   
-		open (OUT, ">$outdir\/$out_flank") || die "$! write $outdir\/$out_flank\n"; 
-		print OUT ">$copy_header\n${left_n}${right_n}\n"; 
-		close OUT;  
-	}
-	# Now finished all flanks for this IS, concatenate the new shorter flanks into a multi-fasta and delete the temps: 
-	`cat $outdir\/$IS\*.fasta.temp > $outdir\/$IS\_${flank_size}bp_flanks.fasta`; 
-	`rm -rf $outdir\/$IS\*.fasta.temp`;  
-} close L; 
-
-print "Done. New output fasta in $outdir\n"; 
+my $filter_name = 'Ident95_E0'; 
+my $indir = "./Output/Flanking_fastas_$filter_name\/200bp_flanks"; 
  
 
-#---------------------------------------------------------------------------
+# Output files:
+my $outdir = "./Output/Flanking_fastas_${filter_name}\/${flank_size}bp_flanks";
+`mkdir -p $outdir`;
+my $warnings = "$outdir\/target_length_failed.txt"; 
+open (W, ">$warnings") || die "$! write $warnings\n";
+
+# Read through the input fasta directory
+my @files = split(' ', `ls ${indir}/IS*fasta`); 
+
+my ($count, $ok) = 0; 
+my $warn_out = 0; my $warn_in = 0; 
+
+foreach my $initial_flanks (@files) {
+	chomp $initial_flanks; 
+	my @n = split('\_', basename($initial_flanks)); 
+	my $IS = "$n[0]\_$n[1]\_$n[2]"; # assumes no underscore in IS name
+	my $new_flanks = "$outdir\/$IS\_${flank_size}bp_flanks.fasta";  
+	`rm -rf $new_flanks`;
+	
+	open (IN, $initial_flanks) || die "$! $initial_flanks\n";
+	open (OUT, ">$new_flanks") || die "$! write $new_flanks\n";
+	
+	my $header = ''; 
+	while (my $line = <IN> ) {
+		chomp $line;   
+		if ($line =~m/^\>/) {
+			$header = $line;
+		}
+		else {			
+		# Not a header - get new shorter flank sequence		
+		# Some input flanks shorter than 400 bp because the subject length size filter was removed from
+		# BLAST filter at the Sep/Oct 2023 re-run, or because the IS resided within 200 bp of subject start or end
+		# For shorter input flanks, must use the position of the IS to derive the offset for substr, NOT 
+		# input_flank_size minus flank_size. If the flank positions are < 199 apart, need to adjust values given to substr
+		# Only output flanks at 2 X new flank size ($target_length) and WARN for those less than target_length 
+				
+			$count++; 
+			my $input_flank_length = length $line;
+				
+			if ($input_flank_length >=  $target_length) {
+				my @cols = split('\_', $header); 
+				$header =~m/leftFlank_(\d+)-(\d+)_rightFlank_(\d+)-(\d+)/;
+				my $lf_start = $1; my $lf_end = $2;
+				my $rf_start = $3; my $rf_end = $4; 
+				my $lf_size = $lf_end - $lf_start + 1; 
+				my $rf_size = $rf_end - $rf_start + 1;  
+				
+				my $shorter_flank = ''; 
+				if ( ( $lf_size < $input_flank_size ) || ( $rf_size < $input_flank_size  ) ){
+					my $offset = $lf_size; 
+					
+					my ($left_flank, $right_flank) = ''; 
+					if ( $lf_size < $flank_size ) {
+						# Take the whole left flank, and use the next adjacent base to the right as the offset value for substr
+						$left_flank = substr $line, 0, $lf_size;  
+					}
+					else {
+						$left_flank = substr $line,($lf_size - $flank_size), $flank_size;
+					}
+						
+					if ( $rf_size < $flank_size ) {
+						# Take the whole right flank 
+						$right_flank = substr $line, $offset, $rf_size;  
+					}
+					else {
+						$right_flank = substr $line, $offset, $flank_size;
+					}
+				
+					$shorter_flank = $left_flank.$right_flank;  
+				}
+				else {
+					$shorter_flank = substr $line, ($input_flank_size - $flank_size), $target_length; 
+				}
+					
+				my $new_seq_length = length $shorter_flank; 
+				if ($new_seq_length == $target_length) {
+					print OUT "$header\n$shorter_flank\n";
+					$ok++; 
+				}
+				else {
+					print W "WARN OUTPUT: New flank sequence for $header less than target length $target_length\: length $new_seq_length\n";
+					$warn_out++; 
+				}
+			}
+			else {
+				print W "WARN INPUT: Input flank sequence for $header less than $target_length\: length $input_flank_length\n";
+				$warn_in++;  
+			}
+		}
+	} close IN; 
+}		
+close W; 
+
+print "Total input sequences: $count\nTotal 2 x $flank_size bp output flank sequences: $ok\nTotal failing input length filter of $target_length bp: $warn_in\nTotal failing output length filter of $target_length bp: $warn_out\n";
+print "\nFailed sequence headers are written to file $warnings\n";
+print "\nNew $target_length bp fastas are written to directory $outdir\n";  
 
 
-
-	
-	
-	
-	
-	
+#

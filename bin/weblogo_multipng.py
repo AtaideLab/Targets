@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os
 from Bio import SeqIO
 from weblogo import SeqList, LogoData, LogoOptions, LogoFormat, png_formatter, unambiguous_dna_alphabet

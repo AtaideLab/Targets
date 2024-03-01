@@ -32,9 +32,79 @@ git clone https://github.com/AtaideLab/Targets.git
 cd Targets/test
 ```
 
--  Add 'tree' of contents
-- add steps
-- add instruction re comparing outputs (comapre the logos created for the test IS to those in the main outputs dir)
+1) run the BLAST against mini db
+Note that this script requires blast+ module, it incldues a 'module load blast+' command. If blast+ is already in your path, can delete/hash out this line. The full versin of this script is a PBS job, uses mt-mode 1, and searches bacteria and archaea from the full non-redundant nucleotide database. This demo script has omitted those features for simplicity of executing the test run. The test database has been restricted to include only the accessions that the 2 test IS align to.  
+Ignore the PBs component, just run as bash: 
+```
+$bash bin/blast_IS.pbs
+```
+
+Creates output: `Output/IS_2sequence_demo.bacterial_archaeal.blast.out`
+
+2) filter the BLAST
+```
+$ perl bin/filter_blast.pl
+```
+
+Creates output: `Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.report` and `Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.filtered`
+
+3) create ranges files for batch flank extraction
+
+```
+$ perl bin/extract_flank_ranges.pl
+
+$ ls -1 Output/Flanking_fastas_Ident95_E0/
+right_flank_ranges.batch.txt
+left_flank_ranges.batch.txt
+failing_flank_warnings.txt
+```
+
+4) extract 200 bp flanks
+
+This script usually submits 2 jobs to PBS, but this part has been hashed out for the test run to just submit the 2 jobs in series on the login node. It still completes in < 10 seconds. 
+```
+bash bin/extract_flanks_submit.sh
+```
+
+Creates 2 new files in  `Output/Flanking_fastas_Ident95_E0` directory: `left_flanks.fasta` and 
+`right_flanks.fasta`. 
+ 
+
+5) concatenate flanks
+For full workflow, this is launched by PBS wrapper `extracted_flanks_postprocess.pbs`. Not required here - 10 seconds to run on login node. 
+
+```
+perl bin/extracted_flanks_postprocess.pl
+```
+
+New outputs are 400 bp fastas in `Output/Flanking_fastas_Ident95_E0/200bp_flanks`, one multi-fasta per IS: 
+
+```
+$ ls -1 Output/Flanking_fastas_Ident95_E0/200bp_flanks/
+ISKpn60_IS110_unknown_200bp_flanks.fasta
+ISPa11_IS110_IS1111_200bp_flanks.fasta
+```
+
+6) extract smaller flanks of desired length for WebLogo generation
+
+Provide desired flank length (eg 20 bp ) as first and only command line argument:
+
+```
+$ perl bin/extract_shorter_flanks.pl 20
+Total input sequences: 1691
+Total 2 x 20 bp output flank sequences: 1690
+Total failing input length filter of 40 bp: 0
+Total failing output length filter of 40 bp: 1
+
+Failed sequence headers are written to file ./Output/Flanking_fastas_Ident95_E0/20bp_flanks/target_length_failed.txt
+
+New 40 bp fastas are written to directory ./Output/Flanking_fastas_Ident95_E0/20bp_flanks
+```
+
+
+7) Create WebLogos
+
+TBA
 
 
 
@@ -45,15 +115,20 @@ cd Targets/test
     - one script frm the multifasta craetion, the rest is bash one liners: update_missing_sequences_fasta_headers.pl
 
 ### BLAST and filter    
-blast_IS_complete.pbs 
-filter_first_round_blast.pl
+blast_IS.pbs 
+filter_blast.pl
+
+details TBA
 
 ### Extract insertion site flanking sequence
-extract_flanks_parallel.pl 
-extract_flanks_make_chunks.pl  
-extract_flanks_parallel_run.sh 
-extract_flanks_concatenate.sh
-extract_shorter_flanks.pl --> not needed, adjust RS script to take from centre of seq of any length and have params for size
+extract_flank_ranges.pl
+extract_flanks_submit.sh
+    - submitted by above: extract_flanks.pbs
+extracted_flanks_postprocess.pbs
+    - submitted by above: extracted_flanks_postprocess.pl
+extract_shorter_flanks.pl <N> 
+
+details TBA
 
 ### Create WebLogos
 weblogo_multipng.py
