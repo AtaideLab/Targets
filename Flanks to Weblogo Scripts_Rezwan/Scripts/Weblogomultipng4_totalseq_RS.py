@@ -40,6 +40,6 @@ def process_directory(input_dir, output_dir):
 
 # Usage
 process_directory(
-    r"C:\Users\Rezwan Siddiquee\Dropbox (Sydney Uni)\Transposases_RS\Target search Bioinformatics\Weblogo Generation\Weblogo Input_RS\20bp_flanks",
-    r"C:\Users\Rezwan Siddiquee\Dropbox (Sydney Uni)\Transposases_RS\Target search Bioinformatics\Weblogo Generation\Weblogo Output_RS\20bp_Targets_RS"
+    r"Input Folder Directory",
+    r"Output Folder Directory"
 )
