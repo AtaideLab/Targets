@@ -19,99 +19,142 @@ The demo workflow has been tested on a Linux command-line environment. The full 
 - python
 - python packages `biopython`, `bio`, `weblogo`
 
-## Running the demo
-1) Run the BLAST against mini db
+## Implementation
+
+It is recommended to first run the demo workflow, to ensure it works on your compute platform. The demo workflow steps each take only a few seconds to run on the Linux command line.
+
+If you choose not to run the demo, please read the demo section as it contains information on the workflow steps. 
+
+
+### Running the demo
+#### Step 1. Run the BLAST against mini db
+
 Notes: this script requires `blast+` module, it includes a `module load blast+` command.  If `blast+` is already in your path, you can delete/hash out this line, or edit to suit the requirements of your environment.  
 
 Change into the base working directory `demo`, then run:
 
 ```
-$ bash Scripts/blast_IS.pbs test
-Running two IS test
+bash Scripts/blast_IS.pbs test
+# Running two IS test
 ```
 
 Output:
 ```
-$ wc -l Output/IS_2sequence_demo.bacterial_archaeal.blast.out 
-123 Output/IS_2sequence_demo.bacterial_archaeal.blast.out
+wc -l Output/IS_2sequence_demo.bacterial_archaeal.blast.out 
+# 123 Output/IS_2sequence_demo.bacterial_archaeal.blast.out
 ```
 
-2) Filter the BLAST for minimum identity 95% and E value 0:
+123 unfiltered BLAST hits. The BLAST output contains no header by default. These are added to the filtered output produced at the next step. The column details are:
+
+| Column | Header   | Description          |
+|--------|----------|----------------------|
+| 1      | qseqid   | Query sequence ID    |
+| 2      | qlen     | Query length         |
+| 3      | length   | Alignment length     |
+| 4      | qstart   | Query start          |
+| 5      | qend     | Query end            |
+| 6      | sseqid   | Subject sequence ID  |
+| 7      | stitle   | Subject title        |
+| 8      | sacc     | Subject accession    |
+| 9      | slen     | Subject length       |
+| 10     | sstart   | Subject start        |
+| 11     | send     | Subject end          |
+| 12     | pident   | % identity           |
+| 13     | mismatch | Number of mismatches |
+| 14     | gapopen  | Number of gap opens  |
+| 15     | evalue   | E value              |
+| 16     | bitscore | Bit score            |
+
+#### Step 2. Filter the BLAST for minimum identity 95% and E value 0
 
 ```
-$ perl Scripts/filter_blast.pl
-```
-
-Output:
-```
-$ wc -l Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.filtered 
-122 Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.filtered
-$ cat Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.report 
-#Sequence_ID    Family  Group   Raw_hits        Passing_hits
-ISPlge4 IS110   IS1111  67      67
-ISPsy35 IS110   NA      56      54
-```
-2 hits failed filtering. 
-
-3) Create flank span/range lists for batch flank extraction:
-
-```
-$ perl Scripts/extract_flank_ranges.pl
-```
-
-Output:
-```
-$ wc -l Output/Flanking_fastas_Ident95_E0/*
-    0 Output/Flanking_fastas_Ident95_E0/failing_flank_warnings.txt
-  121 Output/Flanking_fastas_Ident95_E0/left_flank_ranges.batch.txt
-  121 Output/Flanking_fastas_Ident95_E0/right_flank_ranges.batch.txt
-```
-
-4) Extract 200 bp flanking sequence for hits in filtered BLAST output using `blastdbcmd`:
-
-```
-$ bash Scripts/extract_flanks_submit.sh test
-Running 2 IS demo: creating left flanks
-Running 2 IS demo: creating right flanks
+perl Scripts/filter_blast.pl
 ```
 
 Output:
 ```
-$ wc -l Output/Flanking_fastas_Ident95_E0/*fasta
-  242 Output/Flanking_fastas_Ident95_E0/left_flanks.fasta
-  242 Output/Flanking_fastas_Ident95_E0/right_flanks.fasta
+wc -l Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.filtered 
+#122 Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.filtered
 ```
 
+The filtered output contains headers. 121 of 123 BLAST hits passed filtering. This is summarised in the report file:
 
-5) Concatenate the flanks into one multi-fasta per IS:
 ```
-$ perl Scripts/extracted_flanks_postprocess.pl
+cat Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.report 
+# #Sequence_ID    Family  Group   Raw_hits        Passing_hits
+# ISPlge4 IS110   IS1111  67      67
+# ISPsy35 IS110   NA      56      54
+```
+2 hits from ISPsy35 failed filtering.
+
+#### Step 3. Create flank span/range lists for batch flank extraction
+
+```
+perl Scripts/extract_flank_ranges.pl
 ```
 
 Output:
 ```
-$ wc -l Output/Flanking_fastas_Ident95_E0/200bp_flanks/*
-  134 Output/Flanking_fastas_Ident95_E0/200bp_flanks/ISPlge4_IS110_IS1111_200bp_flanks.fasta
-  108 Output/Flanking_fastas_Ident95_E0/200bp_flanks/ISPsy35_IS110_unknown_200bp_flanks.fasta
+wc -l Output/Flanking_fastas_Ident95_E0/*
+# 0 Output/Flanking_fastas_Ident95_E0/failing_flank_warnings.txt
+# 121 Output/Flanking_fastas_Ident95_E0/left_flank_ranges.batch.txt
+# 121 Output/Flanking_fastas_Ident95_E0/right_flank_ranges.batch.txt
 ```
 
-6) Extract smaller flanks of desired length for WebLogo generation
+All flank sequences were valid, ie there were no hits where the IS was inserted immediately to the left or right edge of the subject, which would produce a left or right flank size of 0 bp. The minimum left or right flank size is set at 1 bp. Filtering for minimum flank size is performed at step 6. This is to enable flexibility with the length of sequences used to generate WebLogos: steps 1 through 5 need only be performed once per dataset, and steps 6-7 can be performed repeatedly using different lengths. Re-running from step 2 with different BLAST filtering parameters is also an option by editing the filter parameters and `filter_name` variable in `filter_blast.pl`. Output is not overwritten when the workflow is re-run with different parameters, as the `filter_name` at step 2 and `flank_size` at step 6 are used to create private output directories. 
 
-Provide desired flank length (eg 20 bp) as first and only command line argument. Flanks failing the size filter will be printed to a list file in the output directory. 
+
+#### Step 4. Extract 200 bp flanking sequence for hits in filtered BLAST output
+
+Notes: like step 1, this script requires `blast+` module, to run the utility `blastdbcmd`. The script includes a `module load blast+` command.  If `blast+` is already in your path, you can delete/hash out this line, or edit to suit the requirements of your environment.
 
 ```
-$ perl Scripts/extract_shorter_flanks.pl 20
-Total input sequences: 121
-Total 2 x 20 bp output flank sequences: 121
-Total failing input length filter of 40 bp: 0
-Total failing output length filter of 40 bp: 0
-
-Failed sequence headers are written to file ./Output/Flanking_fastas_Ident95_E0/20bp_flanks/target_length_failed.txt
-
-New 40 bp fastas are written to directory ./Output/Flanking_fastas_Ident95_E0/20bp_flanks
+bash Scripts/extract_flanks_submit.sh test
+# Running 2 IS demo: creating left flanks
+# Running 2 IS demo: creating right flanks
 ```
 
-7) Create WebLogos
+Output:
+```
+wc -l Output/Flanking_fastas_Ident95_E0/*fasta
+# 242 Output/Flanking_fastas_Ident95_E0/left_flanks.fasta
+# 242 Output/Flanking_fastas_Ident95_E0/right_flanks.fasta
+```
+
+#### Step 5. Concatenate the flanks into one multi-fasta per IS
+```
+perl Scripts/extracted_flanks_postprocess.pl
+```
+
+Output:
+```
+wc -l Output/Flanking_fastas_Ident95_E0/200bp_flanks/*
+# 134 Output/Flanking_fastas_Ident95_E0/200bp_flanks/ISPlge4_IS110_IS1111_200bp_flanks.fasta
+# 108 Output/Flanking_fastas_Ident95_E0/200bp_flanks/ISPsy35_IS110_unknown_200bp_flanks.fasta
+```
+
+All flanking sequences are now concatenated left+right into one multi-fasta per IS. Sequences that have been reverse-complimented have 'RC' in the fasta header. 
+
+
+#### Step 6. Extract smaller flanks of desired length for WebLogo generation
+
+Provide desired flank length as first and only command line argument. Flanks failing the size filter will be printed to a list file in the output directory. 
+
+The specified value must be an integer less than 200. Example below restricts the flanks to 20 bp each side, so the output sequences are 40 bp in length:
+
+```
+perl Scripts/extract_shorter_flanks.pl 20
+# Total input sequences: 121
+# Total 2 x 20 bp output flank sequences: 121
+# Total failing input length filter of 40 bp: 0
+# Total failing output length filter of 40 bp: 0
+
+# Failed sequence headers are written to file ./Output/Flanking_fastas_Ident95_E0/20bp_flanks/target_length_failed.txt
+
+# New 40 bp fastas are written to directory ./Output/Flanking_fastas_Ident95_E0/20bp_flanks
+```
+
+#### Step 7. Create WebLogo sequence conservation images
 
 This step requires `biopython`, `bio` and `weblogo` python packages. If you do not have these installed, run:
 
@@ -121,18 +164,26 @@ pip install bio
 pip install weblogo
 ```
 
-Provide the directory containing the fasta you wish to create WebLogos for as a command-line argument to the script. Note that this script requires all input sequences per IS are of equal length. The downstream script `extract_shorter_flanks.pl` ensures this. The 'filter_name' and 'flank_size' component of the input directory path are used to define the output directory path.
+Provide the directory containing the fasta you wish to create WebLogos for as a command-line argument to the script. 
+
+Note that this script requires all input sequences per IS are of equal length. The downstream script `extract_shorter_flanks.pl` applied at step 6 ensures this. This means it will not run directly on the output of step 5, where flanks may be between 1 bp and 200 bp. To create WebLogos on 200 bp flanks, run step 6 with the command-line argument '200'.
+
+The `filter_name` and `flank_size` component of the input directory path are used to define the output directory path to ensure unique output filepaths for re-runs with different values. 
 
 ```
-$ python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flanks/
+# python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flanks/
 Creating WebLogos on fastas in Output/Flanking_fastas_Ident95_E0/20bp_flanks/
-Writing WebLogos to Output/WebLogos/Ident95_E0_20bp_flanks
-Processing: ISPsy35_IS110_unknown_20bp_flanks.fasta
-Processing: ISPlge4_IS110_IS1111_20bp_flanks.fasta
+# Writing WebLogos to Output/WebLogos/Ident95_E0_20bp_flanks
+# Processing: ISPsy35_IS110_unknown_20bp_flanks.fasta
+# Processing: ISPlge4_IS110_IS1111_20bp_flanks.fasta
 ```
 
-8) Compare the output
 Your generated output will be in `demo/Output`. The expected output is in `demo/expected_output`. 
+
+The WebLogos for the 2 demo IS are shown below:
+
+
+TBA
 
 
 ## Running the workflow
