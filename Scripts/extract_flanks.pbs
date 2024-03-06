@@ -1,0 +1,67 @@
+#!/bin/bash
+
+#########################################################
+#
+# ADD LICENSE
+#
+# Author/s: Cali Willet; cali.willet@sydney.edu.au
+#
+# If you use this script towards a publication, please acknowledge the
+# Sydney Informatics Hub (or co-authorship, where appropriate).
+#
+# Suggested acknowledgement: 
+#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#
+#
+#########################################################
+
+#PBS -P xh27
+#PBS -l ncpus=1
+#PBS -l mem=31GB
+#PBS -l walltime=01:00:00
+#PBS -q hugemem
+#PBS -W umask=022
+#PBS -l wd
+#PBS -l storage=scratch/er01+gdata/er01
+
+module load blast+/2.13.0
+
+
+##### 
+#In test mode, variables are assigned from command line args
+# If not in test mode, variables are parsed from qsub command -v
+if [ -z ${side} ]
+then
+  	# If test mode is in use:
+	side=$1
+fi
+
+if [ -z ${nt} ]
+then
+  	# If test mode is in use:
+	nt=$2
+fi
+
+if [ -z ${dataset} ]
+then
+  	# If test mode is in use:
+	dataset=$3
+fi
+####
+
+
+filter_name=Ident95_E0 
+flank_size=200 
+filtered_hits=Output/${dataset}_${filter_name}.bacterial_archaeal.blast.filtered
+outdir=Output/Flanking_fastas_${filter_name}
+mkdir -p ${outdir}
+input=${outdir}/${side}_flank_ranges.batch.txt
+output=${outdir}/${side}_flanks.fasta
+
+blastdbcmd \
+	-db ${nt} \
+	-out ${output} \
+	-entry_batch ${input} \
+	-line_length ${flank_size}
+
+

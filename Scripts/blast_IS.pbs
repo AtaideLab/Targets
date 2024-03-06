@@ -1,0 +1,64 @@
+#!/bin/bash
+
+#########################################################
+#
+# ADD LICENSE
+#
+# Author/s: Cali Willet; cali.willet@sydney.edu.au
+#
+# If you use this script towards a publication, please acknowledge the
+# Sydney Informatics Hub (or co-authorship, where appropriate).
+#
+# Suggested acknowledgement: 
+#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+#
+#
+#########################################################
+
+
+#PBS -P xh27
+#PBS -N blast
+#PBS -l ncpus=28
+#PBS -l mem=252GB
+#PBS -l walltime=01:00:00
+#PBS -q normalbw
+#PBS -W umask=022
+#PBS -l wd
+#PBS -o ./PBS_logs/blast_IS.o
+#PBS -e ./PBS_logs/blast_IS.e
+#PBS -l storage=scratch/er01+gdata/er01
+
+module load blast+/2.13.0
+
+mkdir -p Output
+
+# formatted BLAST non-redundant nucleotide database
+nt=/g/data/er01/NCBI/preformatted_2024-02-19/nt
+
+# the prefix name of the multi-fasta  (omit .fasta/.fa suffix) containing all of the IS sequences you want to BLAST 
+dataset=IS110_complete 
+
+if [[ $1 == "test" ]]
+then
+	printf "Running two IS demo\n"
+	dataset=IS_2sequence_demo
+	nt=nt/IS_Targets_demo_db
+	NCPUS=2
+
+	blastn \
+        	-db ${nt} \
+        	-query ./Input/${dataset}.fasta \
+        	-out ./Output/${dataset}.bacterial_archaeal.blast.out \
+       	 	-outfmt "6 qseqid qlen length qstart qend sseqid stitle sacc slen sstart send pident mismatch gapopen evalue bitscore"\
+        	-num_threads ${NCPUS}
+
+else
+	blastn \
+		-db ${nt} \
+		-taxidlist bacterial_archaeal.taxids \
+		-query ./Input/${dataset}.fasta \
+		-out ./Output/${dataset}.bacterial_archaeal.blast.out \
+		-outfmt "6 qseqid qlen length qstart qend sseqid stitle sacc slen sstart send pident mismatch gapopen evalue bitscore"\
+		-num_threads ${NCPUS} \
+		-mt_mode 1
+fi
