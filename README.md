@@ -24,8 +24,9 @@ The demo workflow has been tested on a Linux command-line environment. The full 
 
 If you want to implement this workflow on your own IS multi-fasta, it is recommended to first run the demo workflow, to ensure it works on your compute platform. The demo workflow steps each take only a few seconds to run on the Linux command line.
 
+<details>
+<summary><b>Running the demo</b></summary>
 
-### Running the demo
 #### Step 1. Run the BLAST against mini db
 
 Notes: this script requires `blast+` module, it includes a `module load blast+` command.  If `blast+` is already in your path, you can delete/hash out this line, or edit to suit the requirements of your environment.  
@@ -189,7 +190,10 @@ The WebLogos for the 2 demo IS are shown below:
 
 **Fig2.** ISPlge4 conserved target sequence.
 
-### Running the workflow on full input
+</details>
+
+<details>
+<summary><b>Running the workflow on full input</b></summary>
 
 #### Preparing the multi-fasta
 Required input for the workflow is a fasta containing at least one IS query seqeunce. 
@@ -277,7 +281,7 @@ wc -l Output/IS110_complete.bacterial_archaeal.blast.out
 # 194326 Output/IS110_complete.bacterial_archaeal.blast.out
 ```
 
-194326 unfiltered BLAST hits. The BLAST output contains no header by default. These are added to the filtered output produced at the next step. The column details are:
+194,326 unfiltered BLAST hits. The BLAST output contains no header by default. These are added to the filtered output produced at the next step. The column details are:
 
 | Column | Header   | Description          |
 |--------|----------|----------------------|
@@ -298,7 +302,7 @@ wc -l Output/IS110_complete.bacterial_archaeal.blast.out
 | 15     | evalue   | E value              |
 | 16     | bitscore | Bit score            |
 
-#### Step 2. Filter the BLAST 
+#### Step 2. Filter the BLAST output
 
 Default execution filters for a for minimum identity 95% and E value 0. To adjust this behaviour, edit `filter_blast.pl` to include your desired filter parameters. 
 
@@ -432,9 +436,22 @@ python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flank
 # Processing: ISPlge4_IS110_IS1111_20bp_flanks.fasta
 ```
 
-The resulting image files can then be viewed to identify conserved insertion seqeunce target sites. 
+The resulting image files can then be viewed to identify conserved insertion sequence target sites. 
 
+</details>
+<br>
 
+**Example output**
+
+The WebLogos for the 2 demo IS are shown below:
+
+![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPsy35_IS110_unknown_20bp_flanks.png)
+
+**Fig1.** ISPsy35 conserved target sequence  
+
+![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPlge4_IS110_IS1111_20bp_flanks.png)
+
+**Fig2.** ISPlge4 conserved target sequence
 
 ## Citations
 - Siguier P et al. (2006) [ISfinder: the reference centre for bacterial insertion sequences](https://pubmed.ncbi.nlm.nih.gov/16381877/) Nucleic Acids Res. 34:D32-D36
