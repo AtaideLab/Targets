@@ -356,7 +356,7 @@ Like step 1, this script requires `blast+` module, to run the utility `blastdbcm
 
 **Note on BLAST database:** we used BLAST pre-formatted non-redundant nucleotide database version date 2024-02-19. Scripts at steps 1 and 4 contain a variable path `nt` that points to this database. Please adjust this as required to reflect your database filepath.
 
-**Note on compute resources:** our jobs were each exected on one CPU of a 2 x 24-core Intel Xeon Platinum 8268 (Cascade Lake) 2.9 GHz node with total RAM 1.5 TB, giving 32 GB RAM per CPU. Our jobs each used 7.1 minutes walltime and 29 GB RAM. 
+**Note on compute resources:** our jobs were each exected on one CPU of a 2 x 24-core Intel Xeon Platinum 8268 (Cascade Lake) 2.9 GHz node with total RAM 1.5 TB, giving 32 GB RAM per CPU. Our jobs each used 10 minutes walltime and 29 GB RAM. 
 
 Execute the 'submit' script, which will submit two PBS jobs, one each to extract the left and right flanks from the BLAST database using `blastdbcmd` utility: 
 
@@ -378,7 +378,7 @@ These fastas contain left and right 200 bp flanking sequence for all passing BLA
 This step creates one multi-fasta per IS, containing the concatenated left and right 200 bp flanks as 400 bp sequences. Sequences that have been reverse-complimented have 'RC' in the fasta header. 
 
 
-This step can be execuedt directly in your terminal or submitted to a cluster compute node if execution is too slow for terminal. Execution time on the compute node described in step 4 was 1.5 minutes using < 1 GB RAM.
+This step can be executed directly on your terminal or submitted to a cluster compute node if execution is too slow for terminal. Execution time on 1 CPU of a 2 x 24-core Intel Xeon Platinum 8274 (Cascade Lake) 3.2 GHz node was 1.7 minutes using < 1 GB RAM.
 
 To execute directly on terminal:
 ```
@@ -421,6 +421,7 @@ perl Scripts/extract_shorter_flanks.pl 20
 This step requires `biopython`, `bio` and `weblogo` python packages. If you do not have these installed, run:
 
 ```
+module load python3
 pip install biopython
 pip install bio
 pip install weblogo
@@ -437,8 +438,9 @@ module load python3
 python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flanks/
 # Creating WebLogos on fastas in Output/Flanking_fastas_Ident95_E0/20bp_flanks/
 # Writing WebLogos to Output/WebLogos/Ident95_E0_20bp_flanks
-# Processing: ISPsy35_IS110_unknown_20bp_flanks.fasta
-# Processing: ISPlge4_IS110_IS1111_20bp_flanks.fasta
+# Processing: ISSep2_IS110_unknown_20bp_flanks.fasta
+# Processing: ISShdy1_IS110_IS1111_20bp_flanks.fasta
+# Processing: ISMno29_IS110_unknown_20bp_flanks.fasta ...
 ```
 
 The resulting image files can then be viewed to identify conserved insertion sequence target sites. 
