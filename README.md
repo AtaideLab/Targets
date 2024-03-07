@@ -273,7 +273,7 @@ rm Input/bacterial.taxids Input/archaeal.taxids
 
 **Note on BLAST database:** we used BLAST pre-formatted non-redundant nucleotide database version date 2024-02-19. Scripts at steps 1 and 4 contain a variable path `nt` that points to this database. Please adjust this as required to reflect your database filepath.
 
-**Note on compute resources:** our BLAST job was exected on one 2 x 14-core Intel Xeon E5-2690v4 (Broadwell) 2.6GHz node with 256 GB RAM. Walltime used was 2 minutes and RAM used was 112 GB. 
+**Note on compute resources:** our BLAST job was exected on one 2 x 14-core Intel Xeon E5-2690v4 (Broadwell) 2.6GHz node with 256 GB RAM. Walltime used was 21.5 minutes and RAM used was 94 GB. 
 
 ```
 mkdir -p PBS_logs
@@ -339,7 +339,7 @@ perl Scripts/extract_flank_ranges.pl
 
 Output:
 ```
-wc -l Output/Flanking_fastas_Ident95_E0/*txt
+wc -l Output/Flanking_fastas_Ident95_E0/*
 # 57 Output/Flanking_fastas_Ident95_E0/failing_flank_warnings.txt
 # 35484 Output/Flanking_fastas_Ident95_E0/left_flank_ranges.batch.txt
 # 35484 Output/Flanking_fastas_Ident95_E0/right_flank_ranges.batch.txt
@@ -458,7 +458,12 @@ The WebLogos for the 2 demo IS are shown below:
 
 **Fig2.** ISPlge4 conserved target sequence
 
-## Citations
+
+## Citing this workflow
+
+TBA
+
+## References
 - Siguier P et al. (2006) [ISfinder: the reference centre for bacterial insertion sequences](https://pubmed.ncbi.nlm.nih.gov/16381877/) Nucleic Acids Res. 34:D32-D36
 - [ISFinder database](http://www-is.biotoul.fr)
 - BLAST non-redundant nucleotide database: Sayers E et al. [Database resources of the National Center for Biotechnology Information](https://pubmed.ncbi.nlm.nih.gov/33095870/) Nucleic Acids Res. 49(D1):D10-D17
@@ -468,7 +473,7 @@ The WebLogos for the 2 demo IS are shown below:
 
 
 
-# Acknowledgements
+## Acknowledgements
 The authors acknowledge the technical assistance provided by the Sydney Informatics Hub, a Core Research Facility of the University of Sydney and the Australian BioCommons which is enabled by NCRIS via Bioplatforms Australia. The authors acknowledge the use of the National Computational Infrastructure (NCI) supported by the Australian Government and the Sydney Informatics Hub HPC Allocation Scheme, supported by the Deputy Vice-Chancellor (Research), University of Sydney and the ARC LIEF, 2019: Smith, Muller, Thornber et al., Sustaining and strengthening merit-based access to National Computational Infrastructure (LE190100021).
 
 
