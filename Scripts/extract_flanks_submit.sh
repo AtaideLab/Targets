@@ -2,16 +2,10 @@
 
 #########################################################
 #
-# ADD LICENSE
+# License: https://github.com/AtaideLab/Targets/blob/main/LICENSE
 #
 # Author/s: Cali Willet; cali.willet@sydney.edu.au
-#
-# If you use this script towards a publication, please acknowledge the
-# Sydney Informatics Hub (or co-authorship, where appropriate).
-#
-# Suggested acknowledgement: 
-#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
-#
+# Sydney Informatics Hub, The University of Sydney
 #
 #########################################################
 
@@ -19,8 +13,8 @@
 
 sides=(left right)
 
-# formatted BLAST non-redundant nucleotide database
-nt=/g/data/er01/NCBI/preformatted_2024-02-19/nt
+# path to your formatted BLAST non-redundant nucleotide database:
+nt=<filepath>/preformatted_2024-02-19/nt
 
 # the prefix name of the multi-fasta  (omit .fasta/.fa suffix) containing all of the IS sequences you want to BLAST 
 dataset=IS110_complete 
