@@ -159,6 +159,7 @@ perl Scripts/extract_shorter_flanks.pl 20
 This step requires `biopython`, `bio` and `weblogo` python packages. If you do not have these installed, run:
 
 ```
+module load python3
 pip install biopython
 pip install bio
 pip install weblogo
@@ -171,6 +172,7 @@ Note that this script requires all input sequences per IS are of equal length. T
 The `filter_name` and `flank_size` component of the input directory path are used to define the output directory path to ensure unique output filepaths for re-runs with different values. 
 
 ```
+module load python3
 python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flanks/
 # Creating WebLogos on fastas in Output/Flanking_fastas_Ident95_E0/20bp_flanks/
 # Writing WebLogos to Output/WebLogos/Ident95_E0_20bp_flanks
@@ -247,7 +249,7 @@ comm -13 IS110_IDs_from_github.txt-sorted IS110_family_ID_list.txt-sorted > IS11
 cat IS110_from_Github.fasta IS110_extra_from_web.fasta  > IS110_complete.fasta
 ```
 
-The scripts in this workflow contain a variable `dataset` that is set by default to `IS110_complete`. This can be changed to the prefix of your input fasta as required. 
+The scripts in this workflow contain a variable `dataset` that is set by default to `IS110_complete`. This can be changed to the prefix of your input fasta as required. Ensure to delete or rename the existing `Input` and `Output` directories before executing the workflow with your own custom input fasta. 
 
 
 #### Step 1. Run BLAST
@@ -257,10 +259,12 @@ Note: this workflow requires `blast+` module. The scripts at steps 1 and 4 inclu
 - Obtain bacterial and archaeal taxonimic IDs:
 
 ```
+mkdir -p Input
 module load blast+/2.13.0
-sh get_species_taxids.sh -t 2 > bacterial.taxids
-sh get_species_taxids.sh -t  2157 > bacterial_archaeal.taxids
-cat bacterial.taxids archaeal.taxids > bacterial_archaeal.taxids
+sh get_species_taxids.sh -t 2 > Input/bacterial.taxids
+sh get_species_taxids.sh -t  2157 > Input/bacterial_archaeal.taxids
+cat Input/bacterial.taxids Input/archaeal.taxids > Input/bacterial_archaeal.taxids
+rm Input/bacterial.taxids Input/archaeal.taxids
 ```
 
 - BLAST IS sequences against non-redundant nucleotide database restricted to bacterial and archaeal taxonomic IDs
@@ -272,7 +276,8 @@ cat bacterial.taxids archaeal.taxids > bacterial_archaeal.taxids
 **Note on compute resources:** our BLAST job was exected on one 2 x 14-core Intel Xeon E5-2690v4 (Broadwell) 2.6GHz node with 256 GB RAM. Walltime used was 2 minutes and RAM used was 112 GB. 
 
 ```
-qsub Scripts/blast_IS.pb
+mkdir -p PBS_logs
+qsub Scripts/blast_IS.pbs
 ```
 
 Output:
