@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+#########################################################
+#
+# License: https://github.com/AtaideLab/Targets/blob/main/LICENSE
+#
+# Author/s: Rezwan Siddiquee; rezwan.siddiquee@sydney.edu.au
+# School of Life and Environmental Sciences, The University of Sydney
+#
+#########################################################
+
 import os
 import sys
 from Bio import SeqIO

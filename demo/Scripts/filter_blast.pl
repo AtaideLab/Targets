@@ -2,16 +2,10 @@
 
 #########################################################
 #
-# ADD LICENSE
+# License: https://github.com/AtaideLab/Targets/blob/main/LICENSE
 #
 # Author/s: Cali Willet; cali.willet@sydney.edu.au
-#
-# If you use this script towards a publication, please acknowledge the
-# Sydney Informatics Hub (or co-authorship, where appropriate).
-#
-# Suggested acknowledgement: 
-#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
-#
+# Sydney Informatics Hub, The University of Sydney
 #
 #########################################################
 
@@ -40,16 +34,17 @@ my $min_pc_ident = 95;
 # over-ride the filterName variable manually if required
 my $filter_name = "Ident$min_pc_ident\_E$max_e_value"; 
 
+# Prefix of the fasta input file, used to name outputs:
+my $dataset = 'IS_2sequence_demo';
 
 #########################################################
 
 # Input/output file names are hard-coded in downstream scripts.
-# User can change 'filterName' variable above to change the output 
+# User can change 'filter_name' variable above to change the output 
 # file names but changing the directory path or file suffix will 
 # affect other scripts in the workflow 
 
-# Input files: 
-my $dataset = 'IS_2sequence_demo'; 
+# Input files:  
 my $fasta = "./Input/$dataset\.fasta";
 my $hits = "./Output/$dataset\.bacterial_archaeal.blast.out";
 

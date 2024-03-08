@@ -1,22 +1,16 @@
 #!/usr/bin/env perl
 
 #########################################################
-# 
-# ADD LICENSE
+#
+# License: https://github.com/AtaideLab/Targets/blob/main/LICENSE
 #
 # Author/s: Cali Willet; cali.willet@sydney.edu.au
-#
-# If you use this script towards a publication, please acknowledge the
-# Sydney Informatics Hub (or co-authorship, where appropriate).
-#
-# Suggested acknowledgement: 
-#       - See https://github.sydney.edu.au/informatics/PIPE3657-IS-BLAST#acknowledgements
+# Sydney Informatics Hub, The University of Sydney
 #
 #########################################################
 
 use warnings;
 use strict;
- 
 
 #########################################################
 # FILTERING PARAMETERS: CAN BE ADJUSTED BY USER OR LEAVE AS DEFAULT

@@ -9,14 +9,14 @@
 #
 #########################################################
 
-#PBS -P xh27
+#PBS -P <project>
 #PBS -l ncpus=1
 #PBS -l mem=31GB
 #PBS -l walltime=00:30:00
 #PBS -q hugemem
 #PBS -W umask=022
 #PBS -l wd
-#PBS -l storage=scratch/er01+gdata/er01
+#PBS -l storage=scratch/<project>+gdata/<project>
 
 module load blast+/2.13.0
 

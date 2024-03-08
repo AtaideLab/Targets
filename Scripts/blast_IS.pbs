@@ -25,10 +25,10 @@ module load blast+/2.13.0
 
 mkdir -p Output
 
-# formatted BLAST non-redundant nucleotide database
+# Update this path to your formatted BLAST non-redundant nucleotide database:
 nt=<filepath>/preformatted_2024-02-19/nt
 
-# the prefix name of the multi-fasta  (omit .fasta/.fa suffix) containing all of the IS sequences you want to BLAST 
+# Update this to the prefix name of your multi-fasta  (omit .fastasuffix) containing all of the IS sequences you want to BLAST 
 dataset=IS110_complete 
 
 if [[ $1 == "test" ]]

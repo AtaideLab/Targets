@@ -15,8 +15,8 @@
 #########################################################
 
 
-# Path to your formatted BLAST non-redundant nucleotide database:
-nt=/g/data/er01/NCBI/preformatted_2024-02-19/nt
+# Update this path to your formatted BLAST non-redundant nucleotide database:
+nt=<filepath>/NCBI/preformatted_2024-02-19/nt
 
 
 # Prefix name of the multi-fasta  (omit .fasta suffix) 

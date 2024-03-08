@@ -9,7 +9,7 @@
 #
 #########################################################
 
-#PBS -P xh27
+#PBS -P <project>
 #PBS -N concat
 #PBS -l ncpus=1
 #PBS -l mem=4GB
@@ -19,6 +19,6 @@
 #PBS -l wd
 #PBS -o ./PBS_logs/extracted_flanks_postprocess.o
 #PBS -e ./PBS_logs/extracted_flanks_postprocess.e
-#PBS -l storage=scratch/er01+gdata/er01
+#PBS -l storage=scratch/<project>+gdata/<project>
 
 perl Scripts/extracted_flanks_postprocess.pl
