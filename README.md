@@ -4,11 +4,13 @@
 
 Insertion sequences (IS) transpose into genomes in a sequence specific manner. This repository contains a collection of scripts to find the target sites where the IS transposes into. This workflow is implemented in the Linux/Unix command-line environment.
 
-A multi-fasta containing all query IS sequences is first searched against the bacterial and archaeal sequences within the NCB non-redundant nucleotide database using `blastn` from the `BLAST+` package. The BLAST output is then filtered for E value 0 and minimum sequence identity 95%. The `blastdbcmd` tool is then used to extract 200 bp of flanking seqeunce from either side of the insertion sequence. All sequences including exact duplicates are retained in a multi-fasta of insertion flanks per IS. From the 400 bp concatenated flank fastas, 20 bp flanks are extracted, taking care to ensure that the junction of the left and right flank is preserved in the centre of the 40 bp output sequence. These fastas are then processed with `WebLogo`. The resultant image files can then be viewed to identify insertion sequence recognition sequences.
+A multi-fasta containing all query IS sequences is first searched against the bacterial and archaeal sequences within the NCB non-redundant nucleotide database using `blastn` from the `BLAST+` package. The BLAST output is then filtered for E value 0 and minimum sequence identity 95%. The `blastdbcmd` tool is then used to extract 200 bp of flanking seqeunce from either side of the insertion sequence. All sequences including exact duplicates are retained in a multi-fasta of insertion flanks per IS. From the 400 bp concatenated flank fastas, 20 bp flanks are extracted, taking care to ensure that the junction of the left and right flank is preserved in the centre of the 40 bp output sequence. These fastas are then processed with `WebLogo` to identify a conserved target site. The resultant image files can then be viewed to identify insertion sequence recognition sequences.
 
-The workflow here focuses on IS family 110 and its sub-group IS111. We describe the creation of a multi-fasta for these families from the [ISFinder](https://isfinder.biotoul.fr/) database and include relevant inputs and outputs. This workflow can be used for any IS family, by providing a multi-fasta as input and updating the scripts to reflect the prefix of your fasta. The relevant variable name within the scripts is `dataset` and can be updated manually or using `sed`.  
+The workflow here focuses on IS family IS110 and IS1111. We describe the creation of a multi-fasta for these families from the [ISFinder](https://isfinder.biotoul.fr/) database and include relevant inputs and outputs. 
+Given ISFinder annotated these two IS families as IS110 and its sub-group IS1111, we have named each fasta from IS110 family as IS_NAME_IS110_NA and named each fasta from IS1111 family as IS_NAME_IS110_IS1111. 
+This workflow can be used for any IS family, by providing a multi-fasta as input and updating the scripts to reflect the prefix of your fasta. The relevant variable name within the scripts is `dataset` and can be updated manually or using `sed`.  
 
-A demo/test dataset is provided with two IS, one from each of IS110 and IS1111. Results can be compared with ours published here to check the workflow before implementing on your dataset. 
+A demo/test dataset is provided with two IS, one from each of IS110 and IS1111 families. Results can be compared with ours published here to check the workflow before implementing on your dataset. 
 
 ## Compute requirements
 The demo workflow has been tested on a Linux command-line environment. The full workflow was implemented on [NCI Gadi HPC](https://nci.org.au/our-systems/hpc-systems) running PBS Pro on CentOS. 
@@ -85,7 +87,7 @@ cat Output/IS_2sequence_demo_Ident95_E0.bacterial_archaeal.blast.report
 # ISPlge4 IS110   IS1111  67      67
 # ISPsy35 IS110   NA      56      54
 ```
-2 hits from ISPsy35 failed filtering.
+2 hits from ISPsy35_IS110 failed filtering.
 
 #### Step 3. Create flank span/range lists for batch flank extraction
 
@@ -186,11 +188,11 @@ The WebLogos for the 2 demo IS are shown below:
 
 ![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPsy35_IS110_unknown_20bp_flanks.png)
 
-**Fig1.** ISPsy35 conserved target sequence.  
+**Fig1.** ISPsy35_IS110 family conserved target sequence.  
 
 ![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPlge4_IS110_IS1111_20bp_flanks.png)
 
-**Fig2.** ISPlge4 conserved target sequence.
+**Fig2.** ISPlge4_IS1111 family conserved target sequence.
 
 </details>
 
@@ -475,11 +477,11 @@ The WebLogos for the 2 demo IS are shown below:
 
 ![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPsy35_IS110_unknown_20bp_flanks.png)
 
-**Fig1.** ISPsy35 conserved target sequence  
+**Fig1.** ISPsy35_IS110 conserved target sequence  
 
 ![image info](demo/expected_output/WebLogos/Ident95_E0_20bp_flanks/ISPlge4_IS110_IS1111_20bp_flanks.png)
 
-**Fig2.** ISPlge4 conserved target sequence
+**Fig2.** ISPlge4_IS1111 conserved target sequence
 
 
 ## Citing this workflow
