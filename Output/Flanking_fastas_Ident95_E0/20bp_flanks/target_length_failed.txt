@@ -1,0 +1,25 @@
+WARN OUTPUT: New flank sequence for >IS1110_IS110_unknown_within_Z23003_leftFlank_1-14_rightFlank_1477-1620 less than target length 40: length 34
+WARN OUTPUT: New flank sequence for >IS1111A_IS110_IS1111_within_M80806_leftFlank_1-6_rightFlank_1381-1450 less than target length 40: length 26
+WARN OUTPUT: New flank sequence for >IS1111A_IS110_IS1111_within_KT391013_leftFlank_1-2_rightFlank_1376-1427 less than target length 40: length 22
+WARN INPUT: Input flank sequence for >IS1328_IS110_IS1111_within_Z48244_leftFlank_1-6_rightFlank_1350-1359 less than 40: length 16
+WARN INPUT: Input flank sequence for >IS1492_IS110_IS1111_within_AJ288910_leftFlank_1-7_rightFlank_1475-1477 less than 40: length 10
+WARN INPUT: Input flank sequence for >IS1492_IS110_IS1111_within_AJ288909_leftFlank_1-7_rightFlank_1475-1477 less than 40: length 10
+WARN OUTPUT: New flank sequence for >IS1492_IS110_IS1111_within_KU522233_leftFlank_1-15_rightFlank_1475-1674_RC less than target length 40: length 35
+WARN INPUT: Input flank sequence for >IS1492_IS110_IS1111_within_AJ288908_leftFlank_1-7_rightFlank_1467-1469 less than 40: length 10
+WARN INPUT: Input flank sequence for >IS1492a_IS110_IS1111_within_AJ288910_leftFlank_1-6_rightFlank_1475-1477 less than 40: length 9
+WARN INPUT: Input flank sequence for >IS1492a_IS110_IS1111_within_AJ288909_leftFlank_1-6_rightFlank_1475-1477 less than 40: length 9
+WARN OUTPUT: New flank sequence for >IS1492a_IS110_IS1111_within_KU522233_leftFlank_1-15_rightFlank_1476-1675_RC less than target length 40: length 35
+WARN INPUT: Input flank sequence for >IS1492a_IS110_IS1111_within_AJ288908_leftFlank_1-6_rightFlank_1467-1469 less than 40: length 9
+WARN INPUT: Input flank sequence for >IS1533_IS110_IS1111_within_M82880_leftFlank_1-10_rightFlank_1471-1477 less than 40: length 17
+WARN INPUT: Input flank sequence for >IS1533_IS110_IS1111_within_X77623_leftFlank_1-10_rightFlank_1454-1458 less than 40: length 15
+WARN OUTPUT: New flank sequence for >IS4321R_IS110_IS1111_within_MN604268_leftFlank_1-10_rightFlank_1338-1537_RC less than target length 40: length 30
+WARN OUTPUT: New flank sequence for >IS4321R_IS110_IS1111_within_CP137400_leftFlank_1-9_rightFlank_1337-1536_RC less than target length 40: length 29
+WARN OUTPUT: New flank sequence for >IS4321R_IS110_IS1111_within_CP137392_leftFlank_1-3_rightFlank_1331-1530 less than target length 40: length 23
+WARN OUTPUT: New flank sequence for >IS492_IS110_unknown_within_M24471_leftFlank_1-10_rightFlank_1213-1276 less than target length 40: length 30
+WARN OUTPUT: New flank sequence for >ISCfr26_IS110_IS1111_within_CP066283_leftFlank_28755-28954_rightFlank_30320-30326_RC less than target length 40: length 27
+WARN OUTPUT: New flank sequence for >ISEc32_IS110_unknown_within_CP088663_leftFlank_1-15_rightFlank_1196-1395 less than target length 40: length 35
+WARN OUTPUT: New flank sequence for >ISEc32_IS110_unknown_within_KJ170699_leftFlank_93206-93405_rightFlank_94586-94587 less than target length 40: length 22
+WARN OUTPUT: New flank sequence for >ISKpn43_IS110_IS1111_within_CP142023_leftFlank_77126-77325_rightFlank_78700-78707_RC less than target length 40: length 28
+WARN OUTPUT: New flank sequence for >ISKpn60_IS110_unknown_within_CP114570_leftFlank_44561-44760_rightFlank_46135-46143_RC less than target length 40: length 29
+WARN INPUT: Input flank sequence for >ISMysp1_IS110_unknown_within_DQ983918_leftFlank_1-10_rightFlank_1472-1484 less than 40: length 23
+WARN OUTPUT: New flank sequence for >ISNgo2_IS110_unknown_within_CP078119_leftFlank_2175722-2175921_rightFlank_2177029-2177032 less than target length 40: length 24

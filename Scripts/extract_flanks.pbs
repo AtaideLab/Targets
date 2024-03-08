@@ -1,0 +1,66 @@
+#!/bin/bash
+
+#########################################################
+#
+# License: https://github.com/AtaideLab/Targets/blob/main/LICENSE
+#
+# Author/s: Cali Willet; cali.willet@sydney.edu.au
+# Sydney Informatics Hub, The University of Sydney
+#
+#########################################################
+
+#PBS -P <project>
+#PBS -l ncpus=1
+#PBS -l mem=31GB
+#PBS -l walltime=00:30:00
+#PBS -q hugemem
+#PBS -W umask=022
+#PBS -l wd
+#PBS -l storage=scratch/<project>+gdata/<project>
+
+module load blast+/2.13.0
+
+
+##### 
+#In test mode, variables are assigned from command line args
+# If not in test mode, variables are parsed from qsub command -v
+if [ -z ${side} ]
+then
+	side=$1
+fi
+
+if [ -z ${nt} ]
+then
+	nt=$2
+fi
+
+if [ -z ${dataset} ]
+then
+	dataset=$3
+fi
+
+if [ -z ${filter_name} ]
+then
+	filter_name=$4
+fi
+
+if [ -z ${flank_size} ]
+then
+	flank_size=$5
+fi
+
+####
+
+ 
+filtered_hits=Output/${dataset}_${filter_name}.bacterial_archaeal.blast.filtered
+outdir=Output/Flanking_fastas_${filter_name}
+input=${outdir}/${side}_flank_ranges.batch.txt
+output=${outdir}/${side}_flanks.fasta
+
+blastdbcmd \
+	-db ${nt} \
+	-out ${output} \
+	-entry_batch ${input} \
+	-line_length ${flank_size}
+
+
