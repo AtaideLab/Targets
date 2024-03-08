@@ -14,11 +14,11 @@
 #PBS -l ncpus=1
 #PBS -l mem=4GB
 #PBS -l walltime=00:30:00
-#PBS -q hugemem
+#PBS -q normal 
 #PBS -W umask=022
 #PBS -l wd
-#PBS -o ./PBS_logs/extract_via_batch_postprocess.o
-#PBS -e ./PBS_logs/extract_via_batch_postprocess.e
+#PBS -o ./PBS_logs/extracted_flanks_postprocess.o
+#PBS -e ./PBS_logs/extracted_flanks_postprocess.e
 #PBS -l storage=scratch/er01+gdata/er01
 
 perl Scripts/extracted_flanks_postprocess.pl

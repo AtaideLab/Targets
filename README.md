@@ -445,6 +445,27 @@ python3 Scripts/weblogo_multipng.py Output/Flanking_fastas_Ident95_E0/20bp_flank
 
 The resulting image files can then be viewed to identify conserved insertion sequence target sites. 
 
+Note that there has been no filter to avoid creating uninformative WebLogos from IS with only 1 flank fasta sequence. To avoid reviewing such images, you can create a list of IS by number of fastas used to generate the WebLogos with the following command:
+
+```
+for file in Output/Flanking_fastas_Ident95_E0/20bp_flanks/*fasta; do num=$(grep ">" $file | wc -l); id=$(basename $file); printf "$num\t$id\n"; done | sort -rnk1 > Output/Flanking_fastas_Ident95_E0/20bp_flanks/flanks_per_IS.txt
+```
+
+The output of this command will be a 2-column text file indicating the number of flank fastas per IS, sorted from highest number to lowest, eg:
+```
+head Output/Flanking_fastas_Ident95_E0/20bp_flanks/flanks_per_IS.txt 
+# 7061    IS1663_IS110_unknown_20bp_flanks.fasta
+# 1728    ISSfl4_IS110_unknown_20bp_flanks.fasta
+# 1160    IS1533_IS110_IS1111_20bp_flanks.fasta
+# 1144    ISKpn43_IS110_IS1111_20bp_flanks.fasta
+# 1063    ISPa11_IS110_IS1111_20bp_flanks.fasta
+# 1016    ISNgo2_IS110_unknown_20bp_flanks.fasta
+# 920     IS621_IS110_unknown_20bp_flanks.fasta
+# 899     IS4321_IS110_IS1111_20bp_flanks.fasta
+# 899     IS4321L_IS110_IS1111_20bp_flanks.fasta
+# 898     ISSep2_IS110_unknown_20bp_flanks.fasta
+```
+
 </details>
 <br>
 
